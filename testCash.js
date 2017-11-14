@@ -1,26 +1,14 @@
-const tulind = require('tulind');
-const fs = require('fs');
-
 // DATA PARSERS
-intervalParser = require('./dataParsingInterval');
-addRateColumn = require('./dataAddRateColumn');
+const intervalParser = require('./dataParsingInterval'),
+      addRateColumn = require('./dataAddRateColumn');
 
 
 // INDICATORS
-const di = require('./indicators/diTulip'),
-  ema = require('./indicators/emaTulip'),
-  macd = require('./indicators/macdTulip'),
-  rsi = require('./indicators/rsiTulip'),
-  sma = require('./indicators/smaTulip'),
-  stoch = require('./indicators/stochTulip'),
-  cci = require('./indicators/cciTulip'),
-  willr = require('./indicators/willrTulip'),
-  trix = require('./indicators/trixTulip'),
-  roc = require('./indicators/rocTulip')
+const di = require('./indicators/diTulip');
 
 
 // TESTS
-const diTest = require('./tests/cash/dmTest')
+const diTest = require('./tests/cash/diTest');
 
 
 // FUNCTIONS
@@ -37,6 +25,8 @@ function searchForArray(haystack, needle) {
   return -1;
 }
 
+
+// TODO random przechylić na stronę 0.x
 function getRandom(percent) {
   var value = (Math.floor(Math.random() * ((100 + percent) - (100 - percent) + 1) + (100 - percent))) / 100
   return value
@@ -52,13 +42,11 @@ function popSorting(array) {
 
 
 // APP
-intervalParser('./data/EURUSD.txt', 1)
+intervalParser('./data/EURUSD.txt', 15)
 .then(parsedData => {
   //GENETIC ALGORITHM
   var population = [];
   var dead = [];
-  length = Math.ceil(parsedData.length * 0.7)
-  parsedData = parsedData.slice(length)
   // FIRST VARIATION
   for (let i = 0; i < 10; i++) {
     population.push([Math.ceil(Math.random() * 1000), Math.ceil(Math.random() * 20), 0])
@@ -94,10 +82,10 @@ intervalParser('./data/EURUSD.txt', 1)
             }
             for (let k = 2; k < 10; k++) {
               population[k][0] = Math.ceil(population[k][0] * getRandom(5));
-              population[k][1] = Math.ceil(population[k][1] * getRandom(5));
+              population[k][1] = Math.ceil(population[k][1] * getRandom(1));
               while (searchForArray(dead, [population[k][0], population[k][1]]) != -1 || (population[k][0] > 1000 && population[k][1] > 50)) {
                 population[k][0] = Math.ceil(population[k][0] * getRandom(10));
-                population[k][1] = Math.ceil(population[k][1] * getRandom(10));
+                population[k][1] = Math.ceil(population[k][1] * getRandom(2));
               }
             }
             resolve(population)
